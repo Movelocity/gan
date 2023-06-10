@@ -9,7 +9,7 @@ import torch.nn.functional as F
 
 from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
-from torchvision.transforms.functional import Lambda
+from torchvision.transforms import Lambda
 from torch.utils.data.dataloader import DataLoader
 
 import matplotlib.pyplot as plt 
