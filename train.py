@@ -104,7 +104,7 @@ def get_args():
 
 if __name__ == "__main__":
     args = get_args()
-    print(f"Datafolder: {args}")
+    print(f"args: {args}")
     
     torch.manual_seed(args.seed)
 
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     optim_d = torch.optim.Adam(disc.parameters(), lr=1e-4)
 
     for epoch in range(args.epochs):
-        loss_g, loss_d = train_epoch(epoch, gen, disc, optim_g, optim_d)
+        loss_g, loss_d = train_epoch(epoch, gen, disc, optim_g, optim_d, loader)
         print(f"[{epoch}] g:{loss_g:.4f}, d_loss:{loss_d:.4f}")
         
     
