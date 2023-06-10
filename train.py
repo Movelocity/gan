@@ -13,6 +13,7 @@ from torchvision.transforms import Lambda
 from torch.utils.data.dataloader import DataLoader
 
 import matplotlib.pyplot as plt 
+import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
