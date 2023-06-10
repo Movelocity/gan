@@ -136,10 +136,10 @@ if __name__ == "__main__":
         print(f"[{epoch}] g:{loss_g:.4f}, d_loss:{loss_d:.4f}")
         
     
-    torch.save(gen.state_dict(), "state_dict/gen.pth")
-    torch.save(disc.state_dict(), "state_dict/disc.pth")
-    torch.save(optim_g.state_dict(), "state_dict/optim_g.pth")
-    torch.save(optim_d.state_dict(), "state_dict/optim_d.pth")
+    torch.save(gen.state_dict(), "./state_dict/gen.pth")
+    torch.save(disc.state_dict(), "./state_dict/disc.pth")
+    torch.save(optim_g.state_dict(), "./state_dict/optim_g.pth")
+    torch.save(optim_d.state_dict(), "./state_dict/optim_d.pth")
     print("Done.")
 
 # import torch
