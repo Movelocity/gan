@@ -121,7 +121,7 @@ if __name__ == "__main__":
     print(f"dataset size: {len(dataset)}")
 
     batch_size = args.batch_size
-    num_workers = 4 if torch.cuda.is_available() else 0
+    num_workers = 2 if torch.cuda.is_available() else 0
     train_loader = DataLoader(dataset, batch_size, shuffle=True, num_workers=num_workers, pin_memory=True)
     
     gen = Generator(num_classes).to(device)
