@@ -36,10 +36,8 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
         loss_disc_r = F.cross_entropy(disc_r, labels)
         loss_disc_f_entropy = -torch.sum(disc_f * torch.log(disc_f), dim=-1)
 
-        print(loss_disc_r.shape)
-        print(loss_disc_f_entropy.shape)
         # minimize the cross entropy with true labels, maximize entropy with fake input
-        loss_disc = loss_disc_r - loss_disc_f_entropy
+        loss_disc = loss_disc_r - loss_disc_f_entropy.mean()
         optim_d.zero_grad()
         loss_disc.backward()
         optim_d.step()
