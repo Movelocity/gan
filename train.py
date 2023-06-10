@@ -137,6 +137,7 @@ if __name__ == "__main__":
         disc.load_state_dict(torch.load("./state_dict/disc.pth"))
         optim_g.load_state_dict(torch.load("./state_dict/optim_g.pth"))
         optim_d.load_state_dict(torch.load("./state_dict/optim_d.pth"))
+        print("loaded pretrained ckpt")
 
     for epoch in range(args.epochs):
         loss_g, loss_d = train_epoch(epoch, gen, disc, optim_g, optim_d, train_loader)
