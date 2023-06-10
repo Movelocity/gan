@@ -99,6 +99,7 @@ def get_args():
     parser.add_argument("--seed", type=int, default=42, help="The random seed")
     parser.add_argument("--epochs", type=int, default=10, help="Number of epochs to train")
     parser.add_argument("--batch_size", type=int, default=16, help="Batch size")
+    parser.add_argument('--pretrained', type=bool, default=False, help="use pretrained state dict")
 
     args = parser.parse_args()
     return args
@@ -130,6 +131,12 @@ if __name__ == "__main__":
 
     optim_g = torch.optim.Adam(gen.parameters(), lr=1e-5)
     optim_d = torch.optim.Adam(disc.parameters(), lr=1e-4)
+    
+    if args.pretrained:
+        gen.load_state_dict(torch.load("./state_dict/gen.pth"))
+        disc.load_state_dict(torch.load("./state_dict/disc.pth"))
+        optim_g.load_state_dict(torch.load("./state_dict/optim_g.pth"))
+        optim_d.load_state_dict(torch.load("./state_dict/optim_d.pth"))
 
     for epoch in range(args.epochs):
         loss_g, loss_d = train_epoch(epoch, gen, disc, optim_g, optim_d, train_loader)
