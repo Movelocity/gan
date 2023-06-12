@@ -49,7 +49,7 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
         gen.train()
         noise = torch.randn(batch_size, 3, 36, 36).to(device)
         gen_data = gen(noise, labels)
-        disc_gen = disc(gen_data)
+        disc_gen = disc(gen_data).softmax(-1)
         loss_gen = F.cross_entropy(disc_gen, labels)
         optim_g.zero_grad()
         loss_gen.backward()
