@@ -142,9 +142,9 @@ if __name__ == "__main__":
         optim_d.load_state_dict(torch.load("./state_dict/optim_d.pth"))
         print("loaded pretrained ckpt")
 
-    eval_ids = random.choices(len(dataset), k=4)
-    eval_imgs = [data[0] for data in dataset[eval_ids]]
-    eval_labels = [data[1] for data in dataset[eval_ids]]
+    for b_imgs, b_ids in train_loader:
+        eval_imgs = b_imgs[:4]
+        eval_labels = b_ids[:4]
     
     for epoch in range(args.epochs):
         loss_g, loss_d = train_epoch(epoch, gen, disc, optim_g, optim_d, train_loader)
