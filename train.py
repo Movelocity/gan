@@ -14,6 +14,7 @@ from torch.utils.data.dataloader import DataLoader
 
 import matplotlib.pyplot as plt 
 import numpy as np
+import random
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -42,7 +43,7 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
         optim_d.zero_grad()
         loss_disc.backward()
         optim_d.step()
-        disc_losses += loss_disc.item()
+        disc_losses += loss_disc_r.item()
 
         # Train generator
         gen.train()
@@ -55,8 +56,9 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
         optim_g.step()
         gen_losses += loss_gen.item()
 
-    evaluate(gen, imgs, labels, str(epoch))
-    return gen_losses/len(loader), disc_losses/len(loader)
+    loss_g, loss_d = gen_losses/len(loader), disc_losses/len(loader)
+    print(f"[{epoch}] g:{loss_g:.4f}, d_loss:{loss_d:.4f}")
+    return loss_g, loss_d
 
 @torch.no_grad()
 def evaluate(gen, imgs, labels, name):
@@ -69,7 +71,7 @@ def evaluate(gen, imgs, labels, name):
     ])
 
     gen.eval()
-    imgs, labels = imgs[:4].to(device), labels[:4].to(device)
+    imgs, labels = imgs.to(device), labels.to(device)
     batch_size = imgs.shape[0]
 
     noise = torch.randn(batch_size, 3, 36, 36).to(device)
@@ -109,6 +111,7 @@ if __name__ == "__main__":
     print(f"args: {args}")
     
     torch.manual_seed(args.seed)
+    random.seed(args.seed)
 
     image_size = 128
     transform = transforms.Compose([
@@ -139,10 +142,13 @@ if __name__ == "__main__":
         optim_d.load_state_dict(torch.load("./state_dict/optim_d.pth"))
         print("loaded pretrained ckpt")
 
+    eval_ids = random.choices(len(dataset), k=4)
+    eval_imgs = [data[0] for data in dataset[eval_ids]]
+    eval_labels = [data[1] for data in dataset[eval_ids]]
+    
     for epoch in range(args.epochs):
         loss_g, loss_d = train_epoch(epoch, gen, disc, optim_g, optim_d, train_loader)
-        print(f"[{epoch}] g:{loss_g:.4f}, d_loss:{loss_d:.4f}")
-        
+        evaluate(gen, eval_imgs, eval_labels, str(epoch))
     
     torch.save(gen.state_dict(), "./state_dict/gen.pth")
     torch.save(disc.state_dict(), "./state_dict/disc.pth")
