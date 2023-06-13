@@ -32,8 +32,8 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
             fake_imgs = gen(noise, labels)
 
         disc.train()
-        disc_r = disc(imgs).sigmoid(-1)
-        disc_f = disc(fake_imgs).sigmoid(-1)
+        disc_r = disc(imgs).sigmoid()
+        disc_f = disc(fake_imgs).sigmoid()
 
         loss_disc_r = F.cross_entropy(disc_r, labels+1)
         loss_disc_f = F.cross_entropy(disc_f, torch.zeros_like(labels).to(device))
@@ -48,7 +48,7 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
         gen.train()
         noise = torch.randn(batch_size, 3, 36, 36).to(device)
         gen_data = gen(noise, labels)
-        disc_gen = disc(gen_data).sigmoid(-1)
+        disc_gen = disc(gen_data).sigmoid()
         loss_gen = F.cross_entropy(disc_gen, labels+1)
         optim_g.zero_grad()
         loss_gen.backward()
