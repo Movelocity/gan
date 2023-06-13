@@ -32,25 +32,24 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
             fake_imgs = gen(noise, labels)
 
         disc.train()
-        disc_r = disc(imgs).softmax(-1)
-        disc_f = disc(fake_imgs).softmax(-1)
+        disc_r = disc(imgs).sigmoid(-1)
+        disc_f = disc(fake_imgs).sigmoid(-1)
 
-        loss_disc_r = F.cross_entropy(disc_r, labels)
-        loss_disc_f_entropy = -torch.sum(disc_f * torch.log(disc_f), dim=-1)
-
+        loss_disc_r = F.cross_entropy(disc_r, labels+1)
+        loss_disc_f = F.cross_entropy(disc_f, torch.zeros_like(labels).to(device))
+        loss_disc = loss_disc_r + loss_disc_f
         # minimize the cross entropy with true labels, maximize entropy with fake input
-        loss_disc = loss_disc_r - loss_disc_f_entropy.mean()
         optim_d.zero_grad()
         loss_disc.backward()
         optim_d.step()
-        disc_losses += loss_disc_r.item()
+        disc_losses += loss_disc.item()
 
         # Train generator
         gen.train()
         noise = torch.randn(batch_size, 3, 36, 36).to(device)
         gen_data = gen(noise, labels)
-        disc_gen = disc(gen_data).softmax(-1)
-        loss_gen = F.cross_entropy(disc_gen, labels)
+        disc_gen = disc(gen_data).sigmoid(-1)
+        loss_gen = F.cross_entropy(disc_gen, labels+1)
         optim_g.zero_grad()
         loss_gen.backward()
         optim_g.step()
@@ -130,7 +129,7 @@ if __name__ == "__main__":
     train_loader = DataLoader(dataset, batch_size, shuffle=True, num_workers=num_workers, pin_memory=True)
     
     gen = Generator(num_classes).to(device)
-    disc = Discriminator(num_classes).to(device)
+    disc = Discriminator(num_classes+1).to(device)
 
     optim_g = torch.optim.Adam(gen.parameters(), lr=1e-5)
     optim_d = torch.optim.Adam(disc.parameters(), lr=1e-4)
