@@ -39,6 +39,7 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
         loss_disc_f = F.cross_entropy(disc_f, torch.zeros_like(labels).to(device))
         loss_disc = loss_disc_r + loss_disc_f
         # minimize the cross entropy with true labels, maximize entropy with fake input
+        optim_g.zero_grad()
         optim_d.zero_grad()
         loss_disc.backward()
         optim_d.step()
@@ -51,6 +52,7 @@ def train_epoch(epoch, gen, disc, optim_g, optim_d, loader):
         disc_gen = disc(gen_data).sigmoid()
         loss_gen = F.cross_entropy(disc_gen, labels+1)
         optim_g.zero_grad()
+        optim_d.zero_grad()
         loss_gen.backward()
         optim_g.step()
         gen_losses += loss_gen.item()
